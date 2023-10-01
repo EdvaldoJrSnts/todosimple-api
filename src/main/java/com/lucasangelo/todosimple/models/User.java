@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -38,7 +39,7 @@ public class User {
     @Column(name = "username", length = 100, nullable = false, unique = true)
     @NotNull(groups = CreateUser.class)
     @NotEmpty(groups = CreateUser.class)
-    @Size(groups = CreateUser.class, min = 8, max = 60)
+    @Size(groups = CreateUser.class, min = 5, max = 60)
     private String username;
 
     @JsonProperty(access=Access.WRITE_ONLY)
@@ -84,6 +85,7 @@ public class User {
         this.password = password;
     }
 
+    @JsonIgnore
     public List<Task> getTasks() {
         return this.tasks;
     }
