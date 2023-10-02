@@ -17,8 +17,14 @@ import java.util.Objects;
 @Table(name=Task.TABLE_NAME)
 
 public class Task {
-public static final String TABLE_NAME = "task";
    
+public interface CreateTask{
+}
+
+public interface UpdateTask {
+}
+
+public static final String TABLE_NAME = "task";
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
