@@ -19,6 +19,7 @@ import com.lucasangelo.todosimple.models.Task;
 import com.lucasangelo.todosimple.models.Task.CreateTask;
 import com.lucasangelo.todosimple.models.Task.UpdateTask;
 import com.lucasangelo.todosimple.services.TaskService;
+import com.lucasangelo.todosimple.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -26,25 +27,36 @@ import jakarta.validation.Valid;
 @RequestMapping("/task")
 @Validated
 public class TaskController {
-    
-@Autowired
-private TaskService taskService;
 
-@GetMapping("/{id}")
-public ResponseEntity<Task> findById(@PathVariable Long id){
-    Task obj = this.taskService.findById(id);
-    return ResponseEntity.ok().body(obj);
-}
+    @Autowired
+    private TaskService taskService;
 
-@PostMapping
-@Validated
-public ResponseEntity<Void> create(@Valid @RequestBody Task obj){
-    this.taskService.create(obj);
-    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-    .path("/{id}").buildAndExpand(obj.getId()).toUri();
-    return ResponseEntity.created(uri).build();
-}
-@PutMapping("/{id}")
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> findById(@PathVariable Long id) {
+        Task obj = this.taskService.findById(id);
+        return ResponseEntity.ok().body(obj);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Task>> findAllByUserId(@PathVariable Long userId) {
+        userService.findById(userId);
+        List<Task> objs = this.taskService.findAllByUserId(userId);
+        return ResponseEntity.ok().body(objs);
+    }
+
+    @PostMapping
+    @Validated
+    public ResponseEntity<Void> create(@Valid @RequestBody Task obj) {
+        this.taskService.create(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
+
+    @PutMapping("/{id}")
     @Validated(UpdateTask.class)
     public ResponseEntity<Void> update(@Valid @RequestBody Task obj, @PathVariable Long id) {
         obj.setId(id);
@@ -58,9 +70,4 @@ public ResponseEntity<Void> create(@Valid @RequestBody Task obj){
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity <List<Task>> findAllByUserId(@PathVariable Long userId){
-        List<Task> objs = this.taskService.findAllByUserId(userId);
-        return ResponseEntity.ok().body(objs);
-    }
 }
